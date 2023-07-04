@@ -4,6 +4,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { StoreModule } from '@ngrx/store';
+import { provideMockStore } from '@ngrx/store/testing';
 
 import { TaskListComponent } from './task-list.component';
 import { PriorityPipe } from '../../shared/pipes/priority.pipe';
@@ -11,6 +12,8 @@ import { appFeatureKey, reducer } from '../../store/reducers';
 import { TestUtil } from '../../../../tests';
 import { ListViewItems } from '../../shared/models';
 import { editTaskAction, editTaskResponseAction } from '../../store/actions';
+import { TaskListModule } from './task-list.module';
+import { getTaskList } from '../../store';
 
 class RouterStub {
   url = '';
@@ -20,22 +23,41 @@ class RouterStub {
 describe('TaskListComponent', () => {
   let component: TaskListComponent;
   let fixture: ComponentFixture<TaskListComponent>;
+  const date = new Date();
+  const task: ListViewItems = {
+    id: 'abc',
+    name: 'Test 1',
+    description: 'Test Description',
+    assigneeEmail: 'test@gmail.com',
+    dueDate: date,
+    status: 'Open',
+    priority: 1,
+    priorityType: 'Low'
+  };
 
   beforeEach(async () => {
     console.warn = jest.fn();
     await TestBed.configureTestingModule({
-      declarations: [ TaskListComponent ],
-      imports: [StoreModule.forRoot({}), StoreModule.forFeature(appFeatureKey, reducer), MatDialogModule, MatSnackBarModule, NoopAnimationsModule],
+      imports: [StoreModule.forRoot({}), StoreModule.forFeature(appFeatureKey, reducer), MatDialogModule, MatSnackBarModule, NoopAnimationsModule, TaskListModule],
       providers: [
         PriorityPipe,
         {provide: MatDialogRef, useValue: []}, 
         {provide: MAT_DIALOG_DATA, useValue: []},
-        { provide: Router, useClass: RouterStub }
+        { provide: Router, useClass: RouterStub },
+        provideMockStore({
+          selectors: [
+            {
+              selector: getTaskList,
+              value: [task]
+            }
+          ]
+        }),
       ]
     })
     .compileComponents();
     fixture = TestBed.createComponent(TaskListComponent);
     component = fixture.componentInstance;
+    component.taskList = [task];
     fixture.detectChanges();
   });
 
@@ -44,7 +66,7 @@ describe('TaskListComponent', () => {
   });
 
   it('should check init values', () => {
-    expect(component.taskList.length).toBe(0);
+    expect(component.taskList.length).toBe(1);
     expect(component.listHeaders.length).toBe(6);
     expect(component.taskStatus.length).toBe(4);
     expect(TestUtil.getPrivatePropertyValue(component, 'taskListSubscription')).toBeDefined();
@@ -91,29 +113,20 @@ describe('TaskListComponent', () => {
     })
 
     it('should change status value', () => {
-      const task: ListViewItems = {
-        id: 'abc',
-        name: 'Test 1',
-        description: 'Test Description',
-        assigneeEmail: 'test@gmail.com',
-        dueDate: new Date(),
-        status: 'Open',
-        priority: 1,
-        priorityType: 'Low'
-      };
       const key = 'Review';
       const updatedTask: ListViewItems = {
         id: 'abc',
         name: 'Test 1',
         description: 'Test Description',
         assigneeEmail: 'test@gmail.com',
-        dueDate: new Date(),
+        dueDate: date,
         status: 'Review',
         priority: 1,
         priorityType: 'Low'
       };
       component.onChangeDDProperty({key: key, value: task});
       expect((component as any).store.dispatch).toHaveBeenCalledWith(editTaskResponseAction({task: updatedTask}));
+      expect((component as any).taskList[0].status).toBe('Review');
       expect((component as any).snackBar.open).toHaveBeenCalledWith('Status Updated Successfully!!!', '', {duration: 1000});
     });
   });
