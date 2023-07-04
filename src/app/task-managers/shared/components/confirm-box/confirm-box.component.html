@@ -1,0 +1,8 @@
+<h1 mat-dialog-title>Confirm</h1>
+<div mat-dialog-content>
+  <p>{{data.heading}}</p>
+</div>
+<div mat-dialog-actions class="justify-content-end">
+  <button mat-button aria-label="Cancel" [mat-dialog-close]="false">Cancel</button>
+  <button mat-button aria-label="Ok" [mat-dialog-close]="true" cdkFocusInitial>Ok</button>
+</div>

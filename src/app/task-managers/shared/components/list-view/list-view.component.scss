@@ -1,0 +1,9 @@
+@import '../../../../../assets/styles/variables';
+
+:host {
+    .search-icon {
+        cursor: pointer;
+        top: $tm-space-sm;
+        right: $tm-space-sm;
+    }
+}

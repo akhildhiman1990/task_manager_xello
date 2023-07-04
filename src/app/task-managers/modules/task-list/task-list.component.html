@@ -1,0 +1,16 @@
+<div class="shadow p-3 mb-5 bg-white h-100 overflow-y-auto rounded">
+    <ng-container *ngIf="taskList.length;else noListFound">
+        <tm-list-view
+            [listItems]="taskList"
+            [dropDowns]="taskStatus"
+            [headers]="listHeaders"
+            (onEditItem)="onEditItem($event)"
+            (changeDDProperty)="onChangeDDProperty($event)"
+            (onDeleteItem)="onDeleteItem($event)"></tm-list-view>
+    </ng-container>
+</div>
+<ng-template #noListFound>
+    <div class="alert alert-primary" role="alert">
+        No Tasks found how abt creating one.
+    </div>
+</ng-template>

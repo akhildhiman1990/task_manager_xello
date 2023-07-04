@@ -1,0 +1,8 @@
+@import '../assets/styles/color-codes';
+
+:host {
+    .ui-task-list-body {
+        background-color: $tm-light;
+        height: calc(100vh - 65px);
+    }
+}

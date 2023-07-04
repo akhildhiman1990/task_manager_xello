@@ -1,0 +1,21 @@
+<header>
+    <mat-toolbar color="primary">
+        <div class="d-flex w-100 align-items-center">
+            <div class="flex-grow-1">
+                <span class="me-3">
+                    {{appName}}
+                </span>
+            </div>
+            <ng-container *ngIf="isCreateMode">
+                <button type="button" mat-icon-button aria-label="Back to home page" matTooltip="Cancel Task Creation" (click)="cancelTaskCreation()">
+                    <mat-icon aria-hidden="false" aria-label="Cancel Task Creation">close</mat-icon>
+                </button>
+            </ng-container>
+            <ng-container *ngIf="!isCreateMode">
+                <button type="button" mat-icon-button aria-label="Create Task control" matTooltip="Create New Task" (click)="addNewTask()">
+                    <mat-icon aria-hidden="false" aria-label="Create Task">add</mat-icon>
+                </button>
+            </ng-container>
+        </div>
+    </mat-toolbar>    
+</header>

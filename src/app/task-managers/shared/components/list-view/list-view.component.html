@@ -1,0 +1,60 @@
+<div class="search-wrapper mb-3 d-flex">
+    <div class="me-3">
+        <select class="form-select" aria-label="Filter Type" [formControl]="searchTypeFormControl">
+            <option *ngFor="let item of headers" [ngValue]="item">
+                {{item.label}}
+            </option>
+        </select>
+    </div>
+    <div class="flex-grow-1 position-relative">
+        <ng-container *ngIf="searchType === 'date'">
+            <div class="d-flex">
+                <input type="text" class="form-control" aria-label="Due Date" [formControl]="searchValFormControl" [matDatepicker]="picker" placeholder="Search..." />
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="searchType !== 'date'">
+            <input type="text" class="form-control" aria-label="Search Value" [formControl]="searchValFormControl" (keyup.enter)="searchResults()" placeholder="Search..." />
+            <div class="position-absolute search-icon" (click)="searchResults()">
+                <mat-icon>search</mat-icon>
+            </div>
+        </ng-container>
+    </div>
+</div>
+
+<table mat-table [dataSource]="listItems" class="mat-elevation-z8">
+    <ng-container *ngFor="let item of headers">
+        <ng-container matColumnDef="{{item.key}}">
+            <th mat-header-cell *matHeaderCellDef> {{item.label}} </th>
+            <td mat-cell *matCellDef="let element">
+                <ng-container [ngSwitch]="item.type">
+                    <ng-container *ngSwitchCase="'date'">
+                        {{element[item.key] | date: 'mediumDate'}}
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'dropdown'">
+                        <select class="form-select" #statusDD (change)="onChangeItemStatus(statusDD.value, element)" [value]="element.status">
+                            <option *ngFor="let dd of dropDowns" [value]="dd" [selected]="dd === element[item.key]">{{dd}}</option>
+                        </select>
+                    </ng-container>
+                    <ng-container *ngSwitchDefault>
+                        {{element[item.key]}}
+                    </ng-container>
+                 </ng-container>
+            </td>
+        </ng-container>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>
+            Actions
+        </th>
+        <td mat-cell *matCellDef="let element">
+            <button mat-button color="primary" (click)="editItem(element)" aria-label="Edit">Edit</button>
+            <button mat-button color="warn" (click)="deleteItem(element)" aria-label="Delete">Delete</button>
+        </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columns"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+</table>

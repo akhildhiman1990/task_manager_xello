@@ -1,0 +1,11 @@
+form {
+    &.ng-submitted {
+        &.ng-invalid {
+            .form-control {
+                &.ng-invalid {
+                    border: 1px solid $tm-error;
+                }
+            }
+        }
+    }
+}

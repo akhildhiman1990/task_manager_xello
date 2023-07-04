@@ -1,0 +1,67 @@
+<div class="shadow p-3 mb-5 bg-white h-100 overflow-y-auto rounded">
+    <h1>Please add task details</h1>
+    <form [formGroup]="taskCreationFormGroup" (ngSubmit)="submitTask()">
+       <div class="mb-2">
+            <label class="mb-2 d-flex">
+                <strong class="flex-grow-1">Task Name</strong>
+                <span class="text-danger">*</span>
+            </label>
+            <input type="text" class="form-control" aria-label="Task name" formControlName="name" required placeholder="Please Enter Task Name" />
+       </div>
+       <div class="mb-2">
+            <label class="mb-2 d-flex">
+                <strong class="flex-grow-1">Task Description</strong>
+                <span class="text-danger">*</span>
+            </label>
+            <textarea class="form-control" aria-label="Task Description" formControlName="description" placeholder="Please Enter Task Description" required></textarea>
+       </div>
+       <div class="mb-2">
+            <label class="mb-2 d-flex">
+                <strong class="flex-grow-1">Assignee Email</strong>
+                <span class="text-danger">*</span>
+            </label>
+            <input type="text" class="form-control" aria-label="Assignee Email" formControlName="assigneeEmail" placeholder="Please Enter Assignee Email" [matAutocomplete]="userList" required />
+            <mat-autocomplete #userList="matAutocomplete">
+                <mat-option *ngFor="let street of filteredUserEmailList | async" [value]="street">
+                  {{street}}
+                </mat-option>
+            </mat-autocomplete>
+        </div>
+        <div class="mb-2">
+            <label class="mb-2 d-flex">
+                <strong class="flex-grow-1">Due Date</strong>
+                <span class="text-danger">*</span>
+            </label>
+            <div class="d-flex">
+                <input type="text" class="form-control" aria-label="Task Due Date" formControlName="dueDate" [matDatepicker]="picker" placeholder="Please Enter Task Due Date" required />
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="mb-2">
+                <strong>Status</strong>
+            </label>
+            <select class="form-select" aria-label="Task Status" formControlName="status">
+                <option *ngFor="let status of taskStatus" [value]="status">
+                    {{status}}
+                </option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="mb-2">
+                <strong>Priority</strong>
+            </label>
+            <select class="form-select" aria-label="Task Priority" formControlName="priority">
+                <option *ngFor="let priority of taskPriorities" [value]="priority.id">
+                    {{priority.label}}
+                </option>
+            </select>
+        </div>
+        <div class="mb-2 text-end">
+            <button type="submit" mat-flat-button color="primary" aria-label="Submit">
+                {{isEditMode ? 'Update' : 'Create'}}
+            </button>
+        </div>
+    </form>
+</div>
